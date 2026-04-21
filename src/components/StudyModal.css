@@ -1,0 +1,145 @@
+.study-modal-content {
+  background: var(--bg-primary);
+  width: 100%;
+  max-width: 600px;
+  max-height: 95vh;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--glass-border);
+  overflow-y: auto;
+  animation: scaleIn var(--transition-slow) ease-out;
+  display: flex;
+  flex-direction: column;
+}
+
+.study-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 24px 28px 12px;
+}
+
+.study-title {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.study-counter {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.study-progress-track {
+  height: 3px;
+  background: var(--bg-elevated);
+  margin: 0 28px;
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.study-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-orange), var(--accent-violet));
+  border-radius: var(--radius-full);
+  transition: width var(--transition-base);
+}
+
+.study-card-area {
+  padding: 28px;
+  display: flex;
+  justify-content: center;
+  transition: all 0.35s ease-out;
+}
+
+.study-card-area.slide-out-right {
+  animation: slideOutRight 0.35s ease-out forwards;
+}
+
+.study-card-area.slide-out-left {
+  animation: slideOutLeft 0.35s ease-out forwards;
+}
+
+/* Session Complete */
+.session-complete {
+  align-items: center;
+  text-align: center;
+  padding: 48px 36px;
+}
+
+.complete-icon {
+  font-size: 3.5rem;
+  margin-bottom: 16px;
+  animation: bounceIn 0.6s ease-out;
+}
+
+.complete-title {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.complete-subtitle {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin-bottom: 28px;
+}
+
+.session-stats {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.stat-value {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+.stat-success .stat-value { color: var(--accent-emerald); }
+.stat-danger .stat-value { color: var(--accent-rose); }
+
+.stat-label {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.stat-divider {
+  width: 1px;
+  height: 48px;
+  background: var(--glass-border);
+}
+
+.session-accuracy {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 32px;
+}
+
+.session-accuracy strong {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+}
+
+@media (max-width: 520px) {
+  .study-modal-content {
+    max-width: 100%;
+    border-radius: var(--radius-lg);
+    margin: 8px;
+  }
+  .study-card-area { padding: 16px; }
+}
