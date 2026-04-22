@@ -4,10 +4,29 @@ import LeitnerDashboard from './components/LeitnerDashboard';
 import CreateSetModal from './components/CreateSetModal';
 import Sidebar from './components/Sidebar';
 import TopBar from './components/TopBar';
+import { trackActivity } from './services/activityTracker';
+import { useEffect } from 'react';
 import './App.css';
 
 export default function App() {
   const { state, dispatch } = useFlashcards();
+
+  // Temporary Test Data Injection
+  useEffect(() => {
+    const today = new Date().toISOString().split('T')[0];
+    const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+    const dayBefore = new Date(Date.now() - 172800000).toISOString().split('T')[0];
+    
+    const existing = JSON.parse(localStorage.getItem('studyActivity') || '{}');
+    if (Object.keys(existing).length === 0) {
+      localStorage.setItem('studyActivity', JSON.stringify({
+        [today]: 5,
+        [yesterday]: 3,
+        [dayBefore]: 8
+      }));
+    }
+  }, []);
+
   const [activeSetId, setActiveSetId] = useState(null);
   const [activeView, setActiveView] = useState('dashboard'); // 'dashboard', 'workspace', 'set'
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -25,8 +44,13 @@ export default function App() {
   const activeSet = state.studySets.find(s => s.id === activeSetId) || null;
 
   const handleCreateSet = (name, description) => {
-    dispatch({ type: 'CREATE_SET', payload: { name, description } });
+    const newId = `set-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+    dispatch({ 
+      type: 'CREATE_SET', 
+      payload: { id: newId, name, description } 
+    });
     setShowCreateModal(false);
+    handleNavigate('set', newId);
   };
 
   const handleDeleteSet = (setId) => {

@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useFlashcards } from '../context/FlashcardContext';
+import { trackActivity } from '../services/activityTracker';
 import './QuizModal.css';
 
 export default function QuizModal({ quizData, title, setId, onClose }) {
@@ -61,6 +62,7 @@ export default function QuizModal({ quizData, title, setId, onClose }) {
   const handleNext = () => {
     if (currentIndex >= quizData.length - 1) {
       setCompleted(true);
+      trackActivity();
     } else {
       setCurrentIndex(i => i + 1);
       setSelectedOption(null);

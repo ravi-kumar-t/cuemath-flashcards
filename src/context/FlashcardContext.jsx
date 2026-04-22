@@ -39,14 +39,16 @@ function loadSavedState() {
 function flashcardReducer(state, action) {
   switch (action.type) {
     case 'CREATE_SET': {
+      const { id, name, description } = action.payload;
       const newSet = {
-        id: `set-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
-        name: action.payload.name,
-        description: action.payload.description || '',
+        id: id || `set-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+        name: name,
+        description: description || '',
         cards: [],
         materials: [],
         createdAt: Date.now(),
         lastStudied: Date.now(),
+        isNew: true,
       };
       return { ...state, studySets: [...state.studySets, newSet] };
     }
@@ -92,7 +94,7 @@ function flashcardReducer(state, action) {
       return {
         ...state,
         studySets: state.studySets.map(s =>
-          s.id === setId ? { ...s, materials: [...s.materials, mat] } : s
+          s.id === setId ? { ...s, materials: [...s.materials, mat], isNew: false } : s
         ),
       };
     }

@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useFlashcards, useSetStats } from '../context/FlashcardContext';
 import { extractTextFromPdf } from '../services/pdfExtractor';
 import ModuleList from './ModuleList';
@@ -10,6 +10,7 @@ import MasteryBar from './MasteryBar';
 import UploadProcessingModal from './UploadProcessingModal';
 import EditSetModal from './EditSetModal';
 import { generateFlashcards, generateQuiz, generateQuizFromCards } from '../services/gemini';
+import { trackActivity } from '../services/activityTracker';
 import './SetView.css';
 
 export default function SetView({ studySet, onBack }) {
@@ -30,10 +31,27 @@ export default function SetView({ studySet, onBack }) {
   const [showQuiz, setShowQuiz] = useState(false);
   const [quizGenerating, setQuizGenerating] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+
+  // Auto-open upload for new sets
+  useEffect(() => {
+    if (studySet && studySet.isNew && studySet.materials.length === 0) {
+      // Small delay to ensure the UI is ready
+      const timer = setTimeout(() => {
+        fileInputRef.current?.click();
+      }, 800);
+      return () => clearTimeout(timer);
+    }
+  }, [studySet.id]); // Only run when entering a new set
 
   const handleStudyModule = (mod) => {
     setStudyCards([...mod.cards]);
     setStudyTitle(`Module: ${mod.name}`);
+  };
+
+  const openUploadModal = () => {
+    console.log('Opening upload for set:', studySet.id);
+    fileInputRef.current?.click();
   };
 
   const handleFileUpload = async (e) => {
@@ -98,6 +116,7 @@ export default function SetView({ studySet, onBack }) {
     setUploadStatus(null);
     setGeneratedCards([]);
     setGeneratedQuiz([]);
+    trackActivity();
   };
 
   const handleQuizClick = async () => {
@@ -143,6 +162,47 @@ export default function SetView({ studySet, onBack }) {
 
   return (
     <div className="set-view-modern">
+      {/* Getting Started Overlay for New Sets */}
+      {studySet.isNew && studySet.materials.length === 0 && (
+        <div className="new-set-overlay animate-fade-in">
+          <div className="nso-content">
+            <div className="nso-icon">🚀</div>
+            <h2 className="nso-title">Your Second Brain is ready</h2>
+            <p className="nso-text">Upload a PDF or paste your notes to generate flashcards and quizzes instantly.</p>
+            <div className="nso-actions">
+              <button 
+                className="btn btn-primary btn-lg" 
+                onClick={openUploadModal}
+              >
+                Upload Materials
+              </button>
+            </div>
+            <p className="nso-hint">Accepts .pdf files · AI-powered generation</p>
+          </div>
+        </div>
+      )}
+
+      {/* Hidden File Input for Uploads */}
+      <input
+        type="file"
+        ref={fileInputRef}
+        onChange={handleFileUpload}
+        accept=".pdf"
+        style={{ display: 'none' }}
+      />
+
+      {/* Success Toast */}
+      {showSuccess && (
+        <div className="success-toast animate-slide-in">
+          <div className="st-icon">✅</div>
+          <div className="st-content">
+            <span className="st-title">Set created!</span>
+            <span className="st-text">Now upload your PDF or notes to get started.</span>
+          </div>
+          <button className="st-close" onClick={() => setShowSuccess(false)}>✕</button>
+        </div>
+      )}
+
       {/* --- HEADER --- */}
       <header className="sv-modern-header">
         <div className="svm-header-container">
@@ -249,7 +309,7 @@ export default function SetView({ studySet, onBack }) {
               </button>
               <LeitnerSystemView 
                 studySet={studySet} 
-                onOpenIngestion={() => fileInputRef.current?.click()} 
+                onOpenIngestion={openUploadModal} 
               />
             </div>
           )}
@@ -284,7 +344,7 @@ export default function SetView({ studySet, onBack }) {
           
           <button 
             className="sidebar-upload-btn"
-            onClick={() => fileInputRef.current?.click()}
+            onClick={openUploadModal}
           >
             ＋ Add Materials
           </button>

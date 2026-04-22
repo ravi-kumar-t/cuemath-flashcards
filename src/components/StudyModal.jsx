@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useFlashcards } from '../context/FlashcardContext';
+import { trackActivity } from '../services/activityTracker';
 import FlashCard from './FlashCard';
 import './StudyModal.css';
 
@@ -28,10 +29,14 @@ export default function StudyModal({ boxId, cards, title, setId, onClose }) {
   const advance = useCallback(() => {
     if (currentIndex >= cards.length - 1) {
       setCompleted(true);
+      // Milestone: Module Mastery (all cards in this session are mastered)
+      if (sessionStats.mastered === cards.length) {
+        trackActivity();
+      }
     } else {
       setCurrentIndex((i) => i + 1);
     }
-  }, [currentIndex, cards.length]);
+  }, [currentIndex, cards.length, sessionStats.mastered]);
 
   const handleConfidence = (targetBox) => {
     if (animating) return;
