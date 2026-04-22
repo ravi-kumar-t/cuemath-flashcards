@@ -1,8 +1,8 @@
 import { useFlashcards } from '../context/FlashcardContext';
 import './MasteryBar.css';
 
-export default function MasteryBar() {
-  const { masteryPercent, totalCards, box3Cards } = useFlashcards();
+export default function MasteryBar({ stats }) {
+  const { mastery: masteryPercent, total: totalCards, box3Cards } = stats;
 
   if (totalCards === 0) return null;
 

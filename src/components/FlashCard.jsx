@@ -1,17 +1,30 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './FlashCard.css';
 
-export default function FlashCard({ card, onGotIt, onStruggling, showActions = true }) {
+export default function FlashCard({ card, onFlip, isFlipped: externalFlipped }) {
   const [flipped, setFlipped] = useState(false);
+
+  // Sync with external state if provided
+  useEffect(() => {
+    if (externalFlipped !== undefined) {
+      setFlipped(externalFlipped);
+    }
+  }, [externalFlipped]);
+
+  const handleFlip = () => {
+    const nextFlipped = !flipped;
+    setFlipped(nextFlipped);
+    onFlip?.(nextFlipped);
+  };
 
   return (
     <div className="flashcard-wrapper">
       <div
         className={`flashcard ${flipped ? 'flipped' : ''}`}
-        onClick={() => setFlipped(!flipped)}
+        onClick={handleFlip}
         role="button"
         tabIndex={0}
-        onKeyDown={(e) => e.key === ' ' && setFlipped(!flipped)}
+        onKeyDown={(e) => e.key === ' ' && handleFlip()}
       >
         {/* Front - Question */}
         <div className="flashcard-face flashcard-front">
@@ -42,31 +55,6 @@ export default function FlashCard({ card, onGotIt, onStruggling, showActions = t
           </div>
         </div>
       </div>
-
-      {showActions && flipped && (
-        <div className="card-actions">
-          <button
-            id="struggling-btn"
-            className="btn btn-danger btn-lg card-action-btn"
-            onClick={(e) => {
-              e.stopPropagation();
-              onStruggling?.();
-            }}
-          >
-            <span>✗</span> Struggling
-          </button>
-          <button
-            id="got-it-btn"
-            className="btn btn-success btn-lg card-action-btn"
-            onClick={(e) => {
-              e.stopPropagation();
-              onGotIt?.();
-            }}
-          >
-            <span>✓</span> Got it
-          </button>
-        </div>
-      )}
     </div>
   );
 }

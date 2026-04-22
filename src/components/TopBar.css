@@ -1,0 +1,62 @@
+.top-bar {
+  height: 64px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 0 48px;
+  position: sticky;
+  top: 0;
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  z-index: 500;
+}
+
+.top-bar-inner {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.timer-trigger-container {
+  position: relative;
+}
+
+.timer-trigger {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 100px;
+  padding: 6px 14px;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.timer-trigger:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.timer-trigger.active {
+  background: rgba(59, 130, 246, 0.1);
+  border-color: rgba(59, 130, 246, 0.3);
+  color: #3b82f6;
+}
+
+.tt-icon {
+  font-size: 1rem;
+}
+
+@media (max-width: 1024px) {
+  .top-bar {
+    padding: 0 24px;
+  }
+}

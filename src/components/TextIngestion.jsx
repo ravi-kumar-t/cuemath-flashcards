@@ -1,32 +1,106 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useFlashcards } from '../context/FlashcardContext';
 import { generateFlashcards, isApiKeyConfigured } from '../services/gemini';
+import { extractTextFromPdf } from '../services/pdfExtractor';
 import './TextIngestion.css';
 
 export default function TextIngestion({ onClose }) {
   const { dispatch } = useFlashcards();
   const [text, setText] = useState('');
   const [loading, setLoading] = useState(false);
+  const [loadingMsg, setLoadingMsg] = useState('');
   const [error, setError] = useState('');
   const [preview, setPreview] = useState(null);
   const [mode, setMode] = useState(isApiKeyConfigured() ? 'ai' : 'manual');
+  const [dragOver, setDragOver] = useState(false);
+  const fileInputRef = useRef(null);
 
   // Manual card form
   const [manualQ, setManualQ] = useState('');
   const [manualA, setManualA] = useState('');
   const [manualCat, setManualCat] = useState('');
 
-  const handleGenerate = async () => {
+  const handleGenerate = async (sourceText) => {
+    const inputText = sourceText || text;
     setError('');
+    setLoadingMsg('Generating flashcards with AI…');
     setLoading(true);
     try {
-      const cards = await generateFlashcards(text);
+      const cards = await generateFlashcards(inputText);
       setPreview(cards);
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
+      setLoadingMsg('');
     }
+  };
+
+  const handleFileUpload = async (file) => {
+    if (!file) return;
+
+    if (file.type !== 'application/pdf') {
+      setError('Please upload a PDF file.');
+      return;
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+      setError('File is too large. Please use a PDF under 10 MB.');
+      return;
+    }
+
+    setError('');
+    setLoading(true);
+    setLoadingMsg('Extracting text from PDF…');
+
+    try {
+      const extractedText = await extractTextFromPdf(file);
+
+      if (!extractedText || extractedText.trim().length < 20) {
+        throw new Error('Could not extract enough text from this PDF. It may be image-based or empty.');
+      }
+
+      setText(extractedText);
+      setLoadingMsg('Generating flashcards with AI…');
+
+      // Auto-trigger generation
+      const cards = await generateFlashcards(extractedText);
+      setPreview(cards);
+
+      // Track the uploaded material
+      dispatch({
+        type: 'ADD_MATERIAL',
+        payload: { name: file.name, cardCount: cards.length },
+      });
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+      setLoadingMsg('');
+    }
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setDragOver(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) handleFileUpload(file);
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setDragOver(true);
+  };
+
+  const handleDragLeave = () => {
+    setDragOver(false);
+  };
+
+  const handleFileInput = (e) => {
+    const file = e.target.files?.[0];
+    if (file) handleFileUpload(file);
+    // Reset so the same file can be re-selected
+    e.target.value = '';
   };
 
   const handleConfirmPreview = () => {
@@ -123,27 +197,53 @@ export default function TextIngestion({ onClose }) {
 
         {mode === 'ai' ? (
           <div className="ingestion-body">
-            <label className="ingestion-label">Paste your study material below</label>
+            {/* PDF Upload Zone */}
+            <div
+              className={`pdf-upload-zone ${dragOver ? 'drag-over' : ''} ${loading ? 'disabled' : ''}`}
+              onDrop={handleDrop}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onClick={() => !loading && fileInputRef.current?.click()}
+            >
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".pdf"
+                onChange={handleFileInput}
+                className="file-input-hidden"
+                id="pdf-file-input"
+              />
+              <div className="upload-icon">📄</div>
+              <p className="upload-title">Upload a PDF</p>
+              <p className="upload-hint">Drag & drop or click to browse</p>
+              <p className="upload-detail">Text is extracted locally — nothing leaves your browser</p>
+            </div>
+
+            <div className="or-divider">
+              <span>or paste text</span>
+            </div>
+
             <textarea
               id="study-text-input"
               className="ingestion-textarea"
               placeholder="Paste any text — notes, textbook passages, articles…&#10;&#10;The AI teacher will generate high-quality flashcards from this content."
               value={text}
               onChange={(e) => setText(e.target.value)}
-              rows={8}
+              rows={6}
+              disabled={loading}
             />
             <div className="char-count">{text.length} characters</div>
 
             <button
               id="generate-btn"
               className="btn btn-primary btn-lg generate-btn"
-              onClick={handleGenerate}
+              onClick={() => handleGenerate()}
               disabled={loading || text.trim().length < 20}
             >
               {loading ? (
                 <>
                   <span className="spinner" />
-                  Generating…
+                  {loadingMsg || 'Processing…'}
                 </>
               ) : (
                 <>✨ Generate Flashcards</>

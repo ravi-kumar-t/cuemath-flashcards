@@ -1,0 +1,20 @@
+.materials-panel {
+  background: var(--bg-surface);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  position: sticky;
+  top: 80px;
+}
+.mp-title { font-family: var(--font-display); font-size: 0.95rem; font-weight: 700; margin-bottom: 14px; }
+.mp-empty { font-size: 0.78rem; color: var(--text-muted); line-height: 1.5; }
+.mp-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+.mp-item { display: flex; gap: 10px; align-items: flex-start; padding: 10px; background: var(--bg-elevated); border-radius: var(--radius-md); }
+.mp-icon { font-size: 1.2rem; }
+.mp-info { display: flex; flex-direction: column; min-width: 0; }
+.mp-name { font-size: 0.82rem; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mp-date { font-size: 0.68rem; color: var(--text-muted); margin-top: 2px; }
+.mp-section { border-top: 1px solid var(--glass-border); padding-top: 16px; margin-top: 16px; }
+.mp-section-title { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); margin-bottom: 10px; }
+.mp-stat-row { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-secondary); padding: 4px 0; }
+.mp-stat-row strong { color: var(--text-primary); }

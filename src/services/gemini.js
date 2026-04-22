@@ -16,6 +16,22 @@ Return ONLY a valid JSON array with no markdown formatting, no code fences. Each
 Example format:
 [{"question":"What is photosynthesis?","answer":"Photosynthesis is the process by which plants convert sunlight, water, and CO₂ into glucose and oxygen.","concept_category":"Biology"}]`;
 
+const QUIZ_PROMPT = `You are an expert Cuemath teacher who creates challenging multiple-choice quizzes.
+
+Given study material, generate 5-8 multiple-choice questions. Each question must:
+- Test a specific concept clearly
+- Have 4 plausible options (distractors)
+- Have exactly one correct answer
+- Be categorized into a concept_category
+
+Return ONLY a valid JSON array with no markdown formatting. Each object must have:
+- "question": string
+- "options": [string, string, string, string]
+- "correctAnswer": string (must be one of the 4 options)
+- "concept_category": string
+- "originalCardId": string (the ID of the card this question is based on)
+`;
+
 function getApiKey() {
   return import.meta.env.VITE_GEMINI_API_KEY || '';
 }
@@ -79,6 +95,76 @@ export async function generateFlashcards(text) {
       }));
   } catch (parseErr) {
     throw new Error('Failed to parse AI response. Please try again with different text.');
+  }
+}
+
+export async function generateQuiz(text) {
+  const apiKey = getApiKey();
+  if (!apiKey) {
+    throw new Error('Gemini API key is not configured.');
+  }
+
+  const response = await fetch(`${GEMINI_API_URL}?key=${apiKey}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      contents: [{
+        parts: [{ text: `${QUIZ_PROMPT}\n\nStudy Material:\n${text}` }]
+      }],
+      generationConfig: { temperature: 0.7, maxOutputTokens: 4096 },
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to generate quiz from API.');
+  }
+
+  const data = await response.json();
+  const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+  const cleaned = rawText.replace(/```(?:json)?\s*/g, '').replace(/```\s*/g, '').trim();
+
+  try {
+    const quiz = JSON.parse(cleaned);
+    return quiz.map(q => ({
+      ...q,
+      id: `q-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`
+    }));
+  } catch (e) {
+    throw new Error('Failed to parse quiz response.');
+  }
+}
+
+export async function generateQuizFromCards(cards) {
+  const apiKey = getApiKey();
+  if (!apiKey) throw new Error('Gemini API key is not configured.');
+
+  const cardsJson = JSON.stringify(cards.map(c => ({ id: c.id, q: c.question, a: c.answer, cat: c.concept_category })));
+  
+  const response = await fetch(`${GEMINI_API_URL}?key=${apiKey}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      contents: [{
+        parts: [{ text: `${QUIZ_PROMPT}\n\nFlashcards Data:\n${cardsJson}` }]
+      }],
+      generationConfig: { temperature: 0.7, maxOutputTokens: 4096 },
+    }),
+  });
+
+  if (!response.ok) throw new Error('Failed to generate quiz from cards.');
+
+  const data = await response.json();
+  const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+  const cleaned = rawText.replace(/```(?:json)?\s*/g, '').replace(/```\s*/g, '').trim();
+
+  try {
+    const quiz = JSON.parse(cleaned);
+    return quiz.map(q => ({
+      ...q,
+      id: `q-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`
+    }));
+  } catch (e) {
+    throw new Error('Failed to parse quiz response.');
   }
 }
 

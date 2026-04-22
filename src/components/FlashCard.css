@@ -113,17 +113,102 @@
   border-top: 1px solid var(--glass-border);
 }
 
-/* Action Buttons */
-.card-actions {
+/* Confidence Buttons */
+.confidence-actions {
   display: flex;
-  gap: 14px;
+  gap: 10px;
   width: 100%;
   max-width: 480px;
   animation: fadeSlideUp 0.3s ease-out;
 }
 
-.card-action-btn {
+.confidence-btn {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 14px 8px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--glass-border);
+  background: var(--bg-surface);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  position: relative;
+  overflow: hidden;
+}
+
+.confidence-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.confidence-btn:hover::after {
+  opacity: 1;
+}
+
+.confidence-btn:active {
+  transform: scale(0.96);
+}
+
+.confidence-icon {
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.confidence-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-align: center;
+  line-height: 1.3;
+  letter-spacing: 0.01em;
+  position: relative;
+  z-index: 1;
+}
+
+/* Not Very Confident — Orange */
+.confidence-low {
+  border-color: rgba(249, 115, 22, 0.25);
+  color: var(--accent-orange);
+}
+.confidence-low:hover {
+  border-color: rgba(249, 115, 22, 0.5);
+  box-shadow: 0 0 20px rgba(249, 115, 22, 0.12);
+  background: rgba(249, 115, 22, 0.06);
+}
+.confidence-low::after {
+  background: rgba(249, 115, 22, 0.04);
+}
+
+/* Somewhat Confident — Green */
+.confidence-mid {
+  border-color: rgba(52, 211, 153, 0.25);
+  color: var(--accent-emerald);
+}
+.confidence-mid:hover {
+  border-color: rgba(52, 211, 153, 0.5);
+  box-shadow: 0 0 20px rgba(52, 211, 153, 0.12);
+  background: rgba(52, 211, 153, 0.06);
+}
+.confidence-mid::after {
+  background: rgba(52, 211, 153, 0.04);
+}
+
+/* Very Confident — Violet */
+.confidence-high {
+  border-color: rgba(168, 85, 247, 0.25);
+  color: var(--accent-violet);
+}
+.confidence-high:hover {
+  border-color: rgba(168, 85, 247, 0.5);
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.12);
+  background: rgba(168, 85, 247, 0.06);
+}
+.confidence-high::after {
+  background: rgba(168, 85, 247, 0.04);
 }
 
 @media (max-width: 520px) {
@@ -135,5 +220,14 @@
   }
   .card-text {
     font-size: 1rem;
+  }
+  .confidence-actions {
+    gap: 6px;
+  }
+  .confidence-btn {
+    padding: 10px 6px;
+  }
+  .confidence-label {
+    font-size: 0.62rem;
   }
 }

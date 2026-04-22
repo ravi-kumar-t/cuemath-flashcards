@@ -1,145 +1,206 @@
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
 .study-modal-content {
-  background: var(--bg-primary);
+  background: var(--bg-surface);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
   width: 100%;
   max-width: 600px;
-  max-height: 95vh;
-  border-radius: var(--radius-xl);
-  border: 1px solid var(--glass-border);
-  overflow-y: auto;
-  animation: scaleIn var(--transition-slow) ease-out;
+  max-height: 90vh;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  position: relative;
 }
 
 .study-header {
+  padding: 24px 32px;
   display: flex;
-  align-items: flex-start;
   justify-content: space-between;
-  padding: 24px 28px 12px;
+  align-items: flex-start;
 }
 
 .study-title {
   font-family: var(--font-display);
-  font-size: 1.15rem;
-  font-weight: 700;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 4px;
 }
 
 .study-counter {
-  font-size: 0.8rem;
-  color: var(--text-secondary);
-  margin-top: 2px;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-weight: 600;
 }
 
 .study-progress-track {
-  height: 3px;
-  background: var(--bg-elevated);
-  margin: 0 28px;
-  border-radius: var(--radius-full);
-  overflow: hidden;
+  height: 4px;
+  background: var(--glass-border);
+  width: 100%;
 }
 
 .study-progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--accent-orange), var(--accent-violet));
-  border-radius: var(--radius-full);
-  transition: width var(--transition-base);
+  background: linear-gradient(to right, var(--accent-orange), var(--accent-violet));
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .study-card-area {
-  padding: 28px;
+  padding: 40px;
+  flex: 1;
   display: flex;
-  justify-content: center;
-  transition: all 0.35s ease-out;
-}
-
-.study-card-area.slide-out-right {
-  animation: slideOutRight 0.35s ease-out forwards;
-}
-
-.study-card-area.slide-out-left {
-  animation: slideOutLeft 0.35s ease-out forwards;
-}
-
-/* Session Complete */
-.session-complete {
   align-items: center;
+  justify-content: center;
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.35s;
+}
+
+/* Animations */
+.slide-out-left {
+  transform: translateX(-150%) rotate(-15deg);
+  opacity: 0;
+}
+
+.slide-out-right {
+  transform: translateX(150%) rotate(15deg);
+  opacity: 0;
+}
+
+/* Confidence Actions */
+.study-actions-fixed {
+  padding: 24px 32px 32px;
+  display: flex;
+  gap: 12px;
+  background: linear-gradient(to top, var(--bg-elevated), transparent);
+  animation: fadeSlideUp 0.3s ease-out;
+}
+
+.conf-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 16px 8px;
+  border-radius: 16px;
+  border: 1px solid var(--glass-border);
+  background: var(--bg-surface);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.conf-btn:active {
+  transform: scale(0.96);
+}
+
+.conf-icon {
+  font-size: 1.5rem;
+}
+
+.conf-label {
+  font-size: 0.7rem;
+  font-weight: 700;
   text-align: center;
-  padding: 48px 36px;
+  color: var(--text-secondary);
+}
+
+/* Specific button colors */
+.conf-low { border-color: rgba(249, 115, 22, 0.3); color: var(--accent-orange); }
+.conf-low:hover { background: rgba(249, 115, 22, 0.08); border-color: var(--accent-orange); }
+
+.conf-mid { border-color: rgba(52, 211, 153, 0.3); color: var(--accent-emerald); }
+.conf-mid:hover { background: rgba(52, 211, 153, 0.08); border-color: var(--accent-emerald); }
+
+.conf-high { border-color: rgba(168, 85, 247, 0.3); color: var(--accent-violet); }
+.conf-high:hover { background: rgba(168, 85, 247, 0.08); border-color: var(--accent-violet); }
+
+/* Session Complete Screen */
+.session-complete {
+  padding: 48px;
+  text-align: center;
 }
 
 .complete-icon {
-  font-size: 3.5rem;
-  margin-bottom: 16px;
-  animation: bounceIn 0.6s ease-out;
+  font-size: 4rem;
+  margin-bottom: 24px;
 }
 
 .complete-title {
   font-family: var(--font-display);
-  font-size: 1.6rem;
+  font-size: 2.25rem;
   font-weight: 800;
-  margin-bottom: 4px;
+  margin-bottom: 8px;
 }
 
 .complete-subtitle {
-  color: var(--text-secondary);
-  font-size: 0.9rem;
-  margin-bottom: 28px;
+  color: var(--text-muted);
+  margin-bottom: 32px;
 }
 
-.session-stats {
+.three-stats {
   display: flex;
-  align-items: center;
+  justify-content: center;
   gap: 24px;
-  margin-bottom: 24px;
+  margin-bottom: 40px;
 }
 
 .stat-item {
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: 4px;
 }
 
 .stat-value {
-  font-family: var(--font-display);
   font-size: 2rem;
   font-weight: 800;
 }
 
-.stat-success .stat-value { color: var(--accent-emerald); }
-.stat-danger .stat-value { color: var(--accent-rose); }
-
 .stat-label {
-  font-size: 0.78rem;
-  color: var(--text-secondary);
-  font-weight: 500;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-muted);
 }
+
+.stat-danger .stat-value { color: var(--accent-orange); }
+.stat-warning .stat-value { color: var(--accent-emerald); }
+.stat-success .stat-value { color: var(--accent-violet); }
 
 .stat-divider {
   width: 1px;
-  height: 48px;
   background: var(--glass-border);
 }
 
 .session-accuracy {
+  margin-bottom: 40px;
   display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 0.9rem;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.session-accuracy span {
+  font-size: 0.85rem;
+  font-weight: 600;
   color: var(--text-secondary);
-  margin-bottom: 32px;
 }
 
 .session-accuracy strong {
-  font-family: var(--font-display);
-  font-size: 1.3rem;
+  font-size: 2.5rem;
+  font-weight: 900;
 }
 
-@media (max-width: 520px) {
-  .study-modal-content {
-    max-width: 100%;
-    border-radius: var(--radius-lg);
-    margin: 8px;
-  }
-  .study-card-area { padding: 16px; }
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }

@@ -1,0 +1,33 @@
+.topnav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 28px;
+  border-bottom: 1px solid var(--glass-border);
+  background: rgba(13, 15, 26, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.topnav-page-title {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.topnav-add-btn {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .topnav-add-btn {
+    display: inline-flex;
+  }
+  .topnav {
+    padding: 12px 16px;
+  }
+}

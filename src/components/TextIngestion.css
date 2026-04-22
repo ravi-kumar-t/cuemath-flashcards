@@ -120,6 +120,86 @@
   margin-top: 6px;
 }
 
+/* PDF Upload Zone */
+.pdf-upload-zone {
+  border: 2px dashed var(--glass-border);
+  border-radius: var(--radius-lg);
+  padding: 24px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  background: var(--bg-elevated);
+  margin-bottom: 0;
+}
+
+.pdf-upload-zone:hover {
+  border-color: rgba(249, 115, 22, 0.4);
+  background: rgba(249, 115, 22, 0.04);
+}
+
+.pdf-upload-zone.drag-over {
+  border-color: var(--accent-orange);
+  background: rgba(249, 115, 22, 0.08);
+  transform: scale(1.01);
+}
+
+.pdf-upload-zone.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.file-input-hidden {
+  display: none;
+}
+
+.upload-icon {
+  font-size: 2rem;
+  margin-bottom: 8px;
+}
+
+.upload-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.upload-hint {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+
+.upload-detail {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  margin-top: 6px;
+}
+
+/* Or Divider */
+.or-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.or-divider::before,
+.or-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--glass-border);
+}
+
+.or-divider span {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+}
+
 .generate-btn {
   width: 100%;
   margin-top: 16px;
